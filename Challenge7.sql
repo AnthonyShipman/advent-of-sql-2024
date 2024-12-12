@@ -45,7 +45,7 @@ with max_years_rnum_cte as (
 select 
 	mx.elf_id, 
 	mn.elf_id, 
-	initcap(mx.primary_skill)
+	initcap(mx.primary_skill) as primary_skill
 from max_years_rnum_cte mx
 join min_years_rnum_cte mn on mx.primary_skill = mn.primary_skill
 where mx.rnum = 1 and 
