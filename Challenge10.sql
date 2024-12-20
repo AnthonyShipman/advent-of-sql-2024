@@ -1,4 +1,4 @@
--- CHALLENGE 9 --------------------------------------------
+-- CHALLENGE 10 --------------------------------------------
 /* 
 You are working with a table named drinks, which logs various types of beverages consumed over the Christmas parties, along with the date and quantity consumed. Your task is to determine which drinks were the most popular by calculating the total quantity consumed for each type of drink.
 
