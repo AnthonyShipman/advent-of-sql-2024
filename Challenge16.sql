@@ -30,18 +30,12 @@ CREATE TABLE areas (
 
 */
 -- SOLUTION --------------------------------------------- 
-with first_and_last_cte as (
-	select 
-		distinct a.place_name,
-		first_value(sl.timestamp) over (partition by a.place_name order by timestamp) as first_timestamp,
-		first_value(sl.timestamp) over (partition by a.place_name order by timestamp desc) as last_timestamp
-	from sleigh_locations sl 
-	join areas a on ST_Within(sl.coordinate::geometry , a.polygon::geometry)
-) 
 select 
-	place_name, 
-	last_timestamp - first_timestamp as total_hours_spent 
-from first_and_last_cte
+	place_name,
+	max(sl.timestamp) - min(sl.timestamp) as total_hours_spent
+from sleigh_locations sl 
+join areas a on ST_Within(sl.coordinate::geometry , a.polygon::geometry)
+group by 1
 order by 2 desc limit 1
 
 -- RESULT ---------------------------------------------
