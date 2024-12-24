@@ -1,36 +1,38 @@
--- CHALLENGE 14 --------------------------------------------
+-- CHALLENGE 15 --------------------------------------------
 /* 
-Mrs. Claus needs to find the receipt for Santa's green suit that was dry cleaned.
+Using the list of areas you need to find which city the last sleigh_location is located in.
 
-She needs to know when it was dropped off, so submit the drop off date.
+Submit the city name only.
 
-Order by the latest drop off date
+Note: This task might seem simple but its going to get much trickier tomorrow and its essential you nail this part first.
 
 Example Schema:
-CREATE TABLE SantaRecords (
-    record_id INT PRIMARY KEY,
-    record_date DATE,
-    cleaning_receipts JSONB
+CREATE TABLE sleigh_locations (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    coordinate GEOGRAPHY(POINT) NOT NULL
 );
 
+CREATE TABLE areas (
+    id SERIAL PRIMARY KEY,
+    place_name VARCHAR(255) NOT NULL,
+    polygon GEOGRAPHY(POLYGON) NOT NULL
+);
+
+Example Result:
+timestamp         |	area
+----------------------|-----------------------
+2024-12-24 22:00:00+00	| New_York
+2024-12-24 23:00:00+00	| Los_Angeles
+2024-12-25 00:00:00+00	| Tokyo
 
 */
 -- SOLUTION --------------------------------------------- 
-with unnested_receipts_cte as (
-	select 
- 		record_date, 
- 		jsonb_array_elements(cleaning_receipts) as receipt
-	from SantaRecords
-)
-select 
-	record_date, 
-	receipt->>'garment',
-	receipt->>'color',
-	* from unnested_receipts_cte
-where receipt->>'garment' = 'suit'
-	and receipt->>'color' = 'green'
-order by record_date desc
-limit 1
+select timestamp, place_name as area 
+from sleigh_locations sl 
+join areas a on ST_Within(sl.coordinate::geometry , a.polygon::geometry)
+order by timestamp desc limit 1
+
 
 -- RESULT ---------------------------------------------
--- 2024-12-22
+-- Moscow 
